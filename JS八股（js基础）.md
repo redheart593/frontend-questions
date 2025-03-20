@@ -102,10 +102,6 @@ console.log(c instanceof Cat); // true（返回的是新对象，而非 'Meow'�
 
 **示例**：
 
-javascript
-
-复制
-
 ```
 const map = new Map();
 const objKey = { id: 1 };
@@ -128,10 +124,6 @@ console.log(obj["[object Object]"]); // "value"（键被转为字符串）
 | **迭代顺序** | `for...of` 按插入顺序遍历 | 需手动处理顺序（如 `Object.keys` 返回的数组）        |
 
 **示例**：
-
-javascript
-
-复制
 
 ```
 const map = new Map();
@@ -170,10 +162,6 @@ console.log(Object.keys(obj)); // ["1", "2", "3"]（数字键被排序）
 
 **示例**：
 
-javascript
-
-复制
-
 ```
 // Map 的方法
 map.set("key", "value");
@@ -196,10 +184,6 @@ Object.keys(obj).length; // 1
 | **安全创建** | 无需额外操作               | 需通过 `Object.create(null)` 创建无原型的对象                |
 
 **示例**：
-
-javascript
-
-复制
 
 ```
 const map = new Map();
@@ -599,6 +583,8 @@ javascript 代码解读复制代码原码：1000 1010
 
 ## 9、JavaScript脚本延迟加载的方式有哪些？
 
+如果没有defer或async属性，浏览器会**立即加载并执行**相应的脚本。它不会等待后续加载的文档元素，读取到就会开始加载和执行，这样就**阻塞**了后续文档的加载。
+
 ### **1. `async` 属性**
 
 - **作用**：异步加载脚本，**下载完成立即执行**，不阻塞 HTML 解析。
@@ -632,6 +618,11 @@ javascript 代码解读复制代码原码：1000 1010
   ```
 
 ------
+
+**区别**：**defer 和 async属性都是去异步加载外部的JS脚本文件，它们都不会阻塞页面的解析**，其区别如下：
+
+- **执行顺序：** 多个带async属性的标签，不能保证加载的顺序；多个带defer属性的标签，按照加载顺序执行；
+- **脚本是否并行执行：\**async属性，表示\**后续文档的加载和执行与js脚本的加载和执行是并行进行的**，即异步执行；defer属性，加载后续文档的过程和js脚本的**加载(此时仅加载不执行)是并行进行的(异步)**，js脚本需要等到文档**所有元素解析完成之后才执行**
 
 ### **3. 动态创建 Script 标签**
 
@@ -803,8 +794,8 @@ javascript 代码解读复制代码原码：1000 1010
 
 **实际开发中**：
 
-- 通过 DOM 实现交互功能（如表单验证、动态渲染）。
-- 通过 BOM 控制浏览器行为（如页面跳转、历史管理）。
+- 通过 DOM 实现交互功能（如修改文本、添加子元素、绑定点击事件）。
+- 通过 BOM 控制浏览器行为（如页面跳转、历史管理，window）。
 
 ### **一、DOM（Document Object Model，文档对象模型）**
 
@@ -1396,29 +1387,79 @@ function strictFunc() {
 - 第二种方式，通过对象的 constructor 属性来判断，对象的 constructor 属性指向该对象的构造函数，但是这种方式不是很安全，因为 constructor 属性可以被改写。
 - 第三种方式，如果需要判断的是某个内置的引用类型的话，可以使用 Object.prototype.toString() 方法来打印对象的[[Class]] 属性来进行判断。
 
-## 16、for...in和for...of的区别
+## 16、js中 for、forEach、for...in、for...of循环的使用和区别
 
-for…of 是ES6新增的遍历方式，允许遍历一个含有iterator接口的数据结构（数组、对象等）并且返回各项的值，和ES3中的for…in的区别如下
+### for循环
 
-- for…of 遍历获取的是对象的**键值**，for…in 获取的是对象的**键名**；
-- for… in 会遍历对象的整个原型链，性能非常差不推荐使用，而 for … of 只遍历当前对象不会遍历原型链；
-- 对于数组的遍历，for…in 会返回数组中所有可枚举的属性(包括原型链上可枚举的属性)，for…of 只返回数组的下标对应的属性值；
+`for(语句 1; 语句 2; 语句 3){}` ：`for` 循环是 Js 中最常用的一个遍历方式，经常用于数组的循环遍历，可以遍历字符串、数组、类数组对象,但不可以遍历对象
 
-**总结：** for...in 循环主要是为了遍历对象而生，不适用于遍历数组；for...of 循环可以用来遍历数组、类数组对象，字符串、Set、Map 以及 Generator 对象。
+```js
+js 代码解读复制代码for (var i = 0; i < arr.length; i++){ 
+    console.log(arr[i]); 
+}
+//控制台依次打印1 2 3 4 5
+```
 
-### forEach和map方法有什么区别
+- for循环中，可以用break终止全部循环，用continue跳出一层循环
 
-这方法都是用来遍历数组的，两者区别如下：
+### for...in循环
 
-- forEach()方法会针对每一个元素执行提供的函数，对数据的操作会改变原数组，该方法没有返回值；
-- map()方法不会改变原数组的值，返回一个新数组，新数组中的值为原数组调用函数处理之后的值；
+`for (key in object){}` ：`for...in` 属于 JavaScript 中的循环结构，是 `for` 循环的两种变体，但是`for...in`循环可以遍历对象
 
-## 17、for...in和for...of和forEach比较
+- `for..in`循环不适合遍历数组，因为`for...in` 循环的遍历顺序是不确定的,可能会出错
+- `for...in` 循环返回的（key）是每个属性的键名（属性名），类型即字符串类型。
+- `object`有多少成员，就会执行多少次
 
-### **一、核心方法对比**
+```js
+js 代码解读复制代码//遍历对象
+const obj = { a: 1, b: 2, c: 3 };
+for (const x in obj) {
+  console.log(x); // 打印输出：a, b, c
+  console.log(obj[x])//打印输出：1，2，3
+}
+//遍历数组
+for(let i in arr){
+  console.log(i); // 打印输出：0, 1, 2，3，4
+  console.log(arr[i])//打印输出：1，2，3，4，5
+}
+```
+
+### for...of循环
+
+`for (variable of iterable){}`：`for...of` 循环返回的是可迭代对象的元素值，即对应的值类型`for...of`语句在[可迭代对象](https://link.juejin.cn?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FJavaScript%2FReference%2FIteration_protocols)（包括 [`Array`](https://link.juejin.cn?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FJavaScript%2FReference%2FGlobal_Objects%2FArray)，[`Map`](https://link.juejin.cn?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FJavaScript%2FReference%2FGlobal_Objects%2FMap)，[`Set`](https://link.juejin.cn?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FJavaScript%2FReference%2FGlobal_Objects%2FSet)，[`String`](https://link.juejin.cn?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FJavaScript%2FReference%2FGlobal_Objects%2FString)，[`TypedArray`](https://link.juejin.cn?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FJavaScript%2FReference%2FGlobal_Objects%2FTypedArray)，[arguments](https://link.juejin.cn?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FJavaScript%2FReference%2FFunctions%2Farguments) 对象等等）上创建一个迭代循环，调用自定义迭代钩子，并为每个不同属性的值执行语句
+
+- `for...of` 循环返回的（variable）是可迭代对象的元素值，类型即对应的值类型
+- 可以正确响应 break、continue 和 return 语句
+
+```js
+js 代码解读复制代码for(let i in arr){
+  console.log(i); // 打印输出：1, 2，3，4，5
+}
+```
+
+### forEach循环（数组中独有）
+
+`forEach`循环是js数组的一个内置循环方法，它提供了一种简洁的方式来遍历数组的每个元素，并对每个元素执行指定的操作，它提供了一种简洁的方式来遍历数组的每个元素，并对每个元素执行指定的操作
+
+```js
+js 代码解读复制代码array.forEach(callback(currentValue, index, array) {
+  // 执行针对当前元素的操作
+},thisValue);
+```
+
+- `array`：要遍历的数组。
+- `callback`：回调函数，定义要在数组的每个元素上执行的操作。
+- `currentValue`：当前正在处理的元素。
+- `index`：当前元素的索引。
+- `array`：原始数组。
+- forEach() 本身是不支持的 continue 与 break 语句的，我们可以通过 [some](https://link.juejin.cn/?target=https%3A%2F%2Fwww.runoob.com%2Fjsref%2Fjsref-some.html) 和 [every](https://link.juejin.cn/?target=https%3A%2F%2Fwww.runoob.com%2Fjsref%2Fjsref-every.html) 来实现。使用 return 语句实现 **continue** 关键字的效果：
+
+## 总结
+
+### **核心方法对比**
 
 | **特性**     | **`for...in`**                     | **`for...of`**                    | **`forEach`**                  |
-| :----------- | :--------------------------------- | :-------------------------------- | :----------------------------- |
+| ------------ | ---------------------------------- | --------------------------------- | ------------------------------ |
 | **遍历目标** | **对象的可枚举属性**（包括原型链） | **可迭代对象的值**（数组、Map等） | **数组元素**（仅限于数组方法） |
 | **返回值**   | 键（key）或索引（字符串形式）      | 值（value）                       | 无返回值（仅执行回调）         |
 | **可中断性** | 支持 `break`、`return`             | 支持 `break`、`return`            | **不可中断**（无法跳出循环）   |
@@ -1426,145 +1467,12 @@ for…of 是ES6新增的遍历方式，允许遍历一个含有iterator接口的
 | **兼容性**   | 所有浏览器                         | ES6+                              | ES5+（数组方法）               |
 | **适用场景** | 遍历对象属性                       | 遍历集合类数据结构的值            | 数组遍历且无需中断             |
 
-------
+## 17、forEach和map方法有什么区别
 
-### **二、详解与示例**
+这方法都是用来遍历数组的，两者区别如下：
 
-#### **1. `for...in`**
-
-- **用途**：遍历对象的**可枚举属性**（包括原型链上的属性）。
-
-- **示例**：
-
-  ```
-  const obj = { a: 1, b: 2 };
-  for (const key in obj) {
-    console.log(key); // 'a', 'b'
-  }
-  
-  // 需注意原型链属性
-  function Parent() { this.parentProp = 5; }
-  function Child() { this.childProp = 10; }
-  Child.prototype = new Parent();
-  const child = new Child();
-  for (const key in child) {
-    if (child.hasOwnProperty(key)) { // 过滤自身属性
-      console.log(key); // 'childProp'
-    }
-  }
-  ```
-
-#### **2. `for...of`**
-
-- **用途**：遍历 **可迭代对象**（实现了 `Symbol.iterator` 接口的对象）的值。
-
-- **支持的数据类型**：数组、字符串、Map、Set、`arguments`、NodeList 等。
-
-- **示例**：
-
-  ```
-  const arr = [10, 20, 30];
-  for (const value of arr) {
-    console.log(value); // 10, 20, 30
-  }
-  
-  const map = new Map([[1, 'a'], [2, 'b']]);
-  for (const [key, value] of map) {
-    console.log(key, value); // 1 'a', 2 'b'
-  }
-  ```
-
-#### **3. `forEach`**
-
-- **用途**：数组的遍历方法，对每个元素执行回调函数。
-
-- **特性**：
-
-  - 无法使用 `break` 或 `return` 终止循环（除非抛异常）。
-  - 回调函数的参数为 `(value, index, array)`。
-
-- **示例**：
-
-  ```
-  [1, 2, 3].forEach((value, index) => {
-    console.log(value, index); // 1 0, 2 1, 3 2
-  });
-  ```
-
-------
-
-### **三、其他 `for` 相关语法**
-
-#### **1. 传统 `for` 循环**
-
-- **用途**：通过索引控制循环次数，适用于精确控制遍历过程。
-
-- **示例**：
-
-  ```
-  for (let i = 0; i < 5; i++) {
-    console.log(i); // 0, 1, 2, 3, 4
-  }
-  ```
-
-#### **2. `for await...of`（ES2018）**
-
-- **用途**：遍历 **异步可迭代对象**（如异步生成器、Promise 数组）。
-
-- **示例**：
-
-  ```
-  async function* asyncGenerator() {
-    yield await Promise.resolve(1);
-    yield await Promise.resolve(2);
-  }
-  
-  (async () => {
-    for await (const value of asyncGenerator()) {
-      console.log(value); // 1, 2
-    }
-  })();
-  ```
-
-------
-
-### **四、常见误区与注意事项**
-
-#### **1. `for...in` 遍历数组的问题**
-
-- 遍历数组时会返回**字符串类型的索引**，且可能包含非数字键（如手动添加的属性）：
-
-  ```
-  const arr = [10, 20];
-  arr.foo = 'bar';
-  for (const key in arr) {
-    console.log(key); // '0', '1', 'foo'（非预期结果）
-  }
-  ```
-
-#### **2. `forEach` 无法中断**
-
-- 使用 `return` 只能跳过当前迭代，无法终止整个循环：
-
-  ```
-  [1, 2, 3].forEach((num) => {
-    if (num === 2) return; // 仅跳过 2，继续执行 3
-    console.log(num); // 1, 3
-  });
-  ```
-
-#### **3. `for...of` 不适用于普通对象**
-
-- 普通对象默认不可迭代，需手动实现 `Symbol.iterator` 或转换为可迭代结构（如 `Object.entries`）：
-
-  ```
-  const obj = { a: 1, b: 2 };
-  // 错误用法：for (const value of obj) { ... }
-  // 正确用法：
-  for (const [key, value] of Object.entries(obj)) {
-    console.log(key, value); // 'a' 1, 'b' 2
-  }
-  ```
+- forEach()方法会针对每一个元素执行提供的函数，对数据的操作会改变原数组，该方法没有返回值；
+- map()方法不会改变原数组的值，返回一个新数组，新数组中的值为原数组调用函数处理之后的值；
 
 ## 18、interator 迭代器
 
@@ -1720,3 +1628,242 @@ console.log(gen.next()); // { value: undefined, done: true }
 
 - 迭代器是**有状态的**，一旦遍历完成无法重置。
 - 若需重新遍历，需重新调用 `Symbol.iterator` 获取新迭代器。
+
+## **19、Set（集合）**
+
+#### **1. 基本特性**
+
+- **值的唯一性**
+  `Set` 中的值必须是唯一的（通过 `===` 严格相等判断），重复的值会被自动过滤。
+
+  ```
+  const set = new Set();
+  set.add(1);
+  set.add("1");
+  set.add(1); // 重复值会被忽略
+  console.log(set.size); // 输出: 2
+  ```
+
+- **任意类型的值**
+  可以存储任意类型的值（原始值、对象、函数等）。
+
+  ```
+  set.add({ a: 1 });
+  set.add([1, 2]);
+  ```
+
+- **可遍历性**
+  支持迭代方法（如 `forEach`、`for...of`）和属性（如 `size`）。
+
+  ```
+  for (const value of set) {
+    console.log(value);
+  }
+  ```
+
+#### **2. 内存管理**
+
+- **强引用**
+  `Set` 对存储的值是强引用。如果存储的是对象，即使对象在其他地方被销毁，只要它仍在 `Set` 中，垃圾回收器（GC）**不会回收该对象**。
+
+  ```
+  let obj = { data: "test" };
+  const set = new Set();
+  set.add(obj);
+  
+  obj = null; // 断开对原对象的引用
+  // Set 仍保留对对象的强引用，GC 不会回收它！
+  ```
+
+#### **3. 使用场景**
+
+- **去重数组**
+
+  ```
+  const arr = [1, 2, 2, 3, 3];
+  const uniqueArr = [...new Set(arr)]; // [1, 2, 3]
+  ```
+
+- **集合运算**
+  交集、并集、差集等操作。
+
+  ```
+  const setA = new Set([1, 2, 3]);
+  const setB = new Set([2, 3, 4]);
+  const intersection = new Set([...setA].filter(x => setB.has(x))); // {2, 3}
+  ```
+
+------
+
+### **WeakSet（弱集合）**
+
+#### **1. 基本特性**
+
+- **仅存储对象**
+  `WeakSet` 的成员只能是对象，不能是原始值（如数字、字符串）。
+
+  ```
+  const weakSet = new WeakSet();
+  weakSet.add({ a: 1 }); // 合法
+  weakSet.add(1); // TypeError: Invalid value used in weak set
+  ```
+
+- **不可遍历性**
+  没有 `size` 属性，也不支持迭代方法（如 `forEach`、`keys()`）。
+  这是为了避免暴露弱引用对象的状态（垃圾回收可能随时发生）。
+
+#### **2. 内存管理**
+
+- **弱引用**
+  `WeakSet` 对存储的对象是弱引用。如果对象在其他地方没有强引用，即使它在 `WeakSet` 中，垃圾回收器也会**自动回收该对象**，同时从 `WeakSet` 中移除。
+
+  ```
+  let obj = { data: "test" };
+  const weakSet = new WeakSet();
+  weakSet.add(obj);
+  
+  obj = null; // 断开对原对象的引用
+  // GC 会回收该对象，WeakSet 自动移除它
+  ```
+
+#### **3. 使用场景**
+
+- **临时关联对象**
+  跟踪对象是否已被处理（如避免重复操作），且无需手动清理。
+
+  ```
+  const processed = new WeakSet();
+  function processObject(obj) {
+    if (!processed.has(obj)) {
+      // 处理对象...
+      processed.add(obj);
+    }
+  }
+  ```
+
+- **DOM 元素管理**
+  记录已绑定事件的元素，当元素被移除时自动释放内存。
+
+  ```
+  const trackedElements = new WeakSet();
+  document.querySelectorAll("button").forEach(button => {
+    trackedElements.add(button);
+    button.addEventListener("click", handleClick);
+  });
+  ```
+
+## 20、Map和weakMap
+
+### **一、Map（映射）**
+
+#### **1. 核心特性**
+
+- **键的类型**
+  允许使用任意类型的值（对象、原始值、函数等）作为键。
+
+  ```
+  const map = new Map();
+  map.set(42, "数字键");          // 数字
+  map.set(Symbol("id"), "Symbol键"); // Symbol
+  map.set(document.body, "DOM元素"); // 对象
+  ```
+
+- **强引用键**
+  `Map` 对键是强引用。即使键对象在其他地方被销毁，只要它存在于 `Map` 中，垃圾回收器（GC）**不会回收该对象**。
+
+  ```
+  let obj = { data: "test" };
+  map.set(obj, "关联数据");
+  obj = null; // 断开引用，但 Map 仍保留该键，对象不会被 GC 回收！
+  ```
+
+- **可遍历性**
+  支持迭代方法（`keys()`、`values()`、`entries()`）和 `size` 属性。
+
+  ```
+  for (const [key, value] of map) {
+    console.log(key, value); // 按插入顺序遍历
+  }
+  ```
+
+#### **2. 典型场景**
+
+- **需要复杂键的关联数据**
+  例如用对象作为键存储元数据：
+
+  ```
+  const userActions = new Map();
+  const user = { id: 1 };
+  userActions.set(user, ["登录", "购买"]);
+  ```
+
+- **维护有序键值对**
+  例如记录操作历史：
+
+  ```
+  const history = new Map();
+  history.set(Date.now(), "用户点击按钮");
+  history.set(Date.now() + 1000, "用户提交表单");
+  ```
+
+------
+
+### **二、WeakMap（弱映射）**
+
+#### **1. 核心特性**
+
+- **仅允许对象作为键**
+  键必须是对象，不能是原始值（如数字、字符串）。
+
+  ```
+  const weakMap = new WeakMap();
+  weakMap.set({}, "有效键"); // ✅
+  weakMap.set(42, "无效键"); // ❌ TypeError
+  ```
+
+- **弱引用键**
+  如果键对象在其他地方没有强引用，即使它在 `WeakMap` 中，也会被 GC **自动回收**，对应的键值对随之消失。
+
+  ```
+  let obj = { id: 1 };
+  weakMap.set(obj, "临时数据");
+  obj = null; // 断开强引用
+  // GC 触发后，WeakMap 中该键值对自动移除
+  ```
+
+- **不可遍历**
+  没有 `size` 属性，也不支持迭代方法。无法直接获取所有键值对。
+
+#### **2. 典型场景**
+
+- **私有属性存储**
+  避免外部直接访问对象的内部数据：
+
+  ```
+  const privateData = new WeakMap();
+  class User {
+    constructor(name) {
+      privateData.set(this, { name });
+    }
+    getName() {
+      return privateData.get(this).name;
+    }
+  }
+  ```
+
+- **DOM 元素关联数据**
+  当 DOM 元素被移除时，自动释放关联数据：
+
+  ```
+  const domData = new WeakMap();
+  const button = document.querySelector("button");
+  domData.set(button, { clicks: 0 });
+  
+  button.addEventListener("click", () => {
+    const data = domData.get(button);
+    data.clicks++;
+  });
+  
+  // 移除按钮后，GC 会自动清理 domData 中的关联数据
+  button.remove();
+  ```

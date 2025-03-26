@@ -408,7 +408,464 @@ Array.from(arrayLike);
 
 ## 7、数组方法有哪些
 
-**参见数据结构资料中的数组常见方法**
+**数组常用方法之 push**
+
+- `push` 是用来在数组的末尾追加一个元素
+
+  ```javascript
+  var arr = [1, 2, 3]
+  
+  // 使用 push 方法追加一个元素在末尾
+  arr.push(4)
+  
+  console.log(arr) // [1, 2, 3, 4]
+  ```
+
+
+
+**数组常用方法之 pop**
+
+- `pop` 是用来删除数组末尾的一个元素
+
+  ```javascript
+  var arr = [1, 2, 3]
+  
+  // 使用 pop 方法删除末尾的一个元素
+  arr.pop()
+  
+  console.log(arr) // [1, 2]
+  ```
+
+
+
+**数组常用方法之 unshift**
+
+- `unshift` 是在数组的最前面添加一个元素
+
+  ```javascript
+  var arr = [1, 2, 3]
+  
+  // 使用 unshift 方法想数组的最前面添加一个元素
+  arr.unshift(4)
+  
+  console.log(arr) // [4, 1, 2, 3]
+  ```
+
+
+
+**数组常用方法之  shift**
+
+- `shift` 是删除数组最前面的一个元素
+
+  ```javascript
+  var arr = [1, 2, 3]
+  
+  // 使用 shift 方法删除数组最前面的一个元素
+  arr.shift()
+  
+  console.log(arr) // [2, 3]
+  ```
+
+
+
+**数组常用方法之 splice**
+
+- `splice` 是截取数组中的某些内容，按照数组的索引来截取
+
+- 语法： `splice(从哪一个索引位置开始，截取多少个，替换的新元素)` （第三个参数可以不写）
+
+  ```javascript
+  var arr = [1, 2, 3, 4, 5]
+  
+  // 使用 splice 方法截取数组
+  arr.splice(1, 2)
+  
+  console.log(arr) // [1, 4, 5]
+  ```
+
+  - `arr.splice(1, 2)` 表示从索引 1 开始截取 2 个内容
+  - 第三个参数没有写，就是没有新内容替换掉截取位置
+
+  ```javascript
+  var arr = [1, 2, 3, 4, 5]
+  
+  // 使用 splice 方法截取数组
+  arr.splice(1, 2, '我是新内容')
+  
+  console.log(arr) // [1, '我是新内容', 4, 5]
+  ```
+
+  - `arr.splice(1, 2, '我是新内容')` 表示从索引 1 开始截取 2 个内容
+  - 然后用第三个参数把截取完空出来的位置填充
+
+
+
+**数组常用方法之 reverse**
+
+- `reverse` 是用来反转数组使用的
+
+  ```javascript
+  var arr = [1, 2, 3]
+  
+  // 使用 reverse 方法来反转数组
+  arr.reverse()
+  
+  console.log(arr) // [3, 2, 1]
+  ```
+
+**数组常用方法之 sort**
+
+- `sort` 是用来给数组排序的，会改变原始数组
+
+  ```javascript
+  var arr = [2, 3, 1]
+  
+  // 使用 sort 方法给数组排序
+  arr.sort()
+  
+  console.log(arr) // [1, 2, 3]
+  ```
+
+  - 这个只是一个基本的简单用法，默认比较的是字符串第一位字符的**UTF-16 编码**，所以如果是[10,1,2]，排序后是[1,10,2]
+
+    标准用法：
+
+    **自定义比较函数**
+
+    - **语法**：`arr.sort(compareFunction)`
+    - **参数**：`compareFunction(a, b)`，返回负数、0或正数。a,b是数组从第一位元素开始遍历
+    - **规则**：
+      - 返回 **负数**：`a`排在`b`前面。
+      - 返回 **正数**：`b`排在`a`前面。
+      - 返回 **0**：保持原有顺序。
+
+    #### **示例1：数字排序**
+
+    javascript
+
+    复制
+
+    ```
+    // 升序
+    [3, 1, 2].sort((a, b) => a - b); // [1, 2, 3]
+    // 降序
+    [3, 1, 2].sort((a, b) => b - a); // [3, 2, 1]
+    ```
+
+    #### **示例2：对象属性排序**
+
+    javascript
+
+    复制
+
+    ```
+    const users = [
+      { name: 'Alice', age: 30 },
+      { name: 'Bob', age: 25 }
+    ];
+    users.sort((a, b) => a.age - b.age); // 按年龄升序
+    ```
+
+    #### **示例3：字符串排序（忽略大小写）**
+
+    javascript
+
+    复制
+
+    ```
+    const names = ['Zoe', 'Adam', 'bob'];
+    names.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    // 结果：['Adam', 'bob', 'Zoe']
+    ```
+
+**数组常用方法之 concat**
+
+- `concat` 是把多个数组进行拼接
+
+- 和之前的方法有一些不一样的地方，就是 `concat` 不会改变原始数组，而是返回一个新的数组
+
+  ```javascript
+  var arr = [1, 2, 3]
+  
+  // 使用 concat 方法拼接数组
+  var newArr = arr.concat([4, 5, 6])
+  
+  console.log(arr) // [1, 2, 3]
+  console.log(newArr) // [1, 2, 3, 4, 5, 6]
+  ```
+
+  - 注意： **`concat` 方法不会改变原始数组**
+
+
+
+**数组常用方法之 join**
+
+- `join` 是把数组里面的每一项内容链接起来，变成一个字符串
+
+- 可以自己定义每一项之间链接的内容 `join(要以什么内容链接)` 如果没有字符就是直接变成字符串
+
+- 不会改变原始数组，而是把链接好的字符串返回
+
+  ```javascript
+  var arr = [1, 2, 3]
+  
+  // 使用 join 链接数组
+  var str = arr.join('-')
+  
+  console.log(arr) // [1, 2, 3]
+  console.log(str) // 1-2-3
+  ```
+
+  - 注意： **join 方法不会改变原始数组，而是返回链接好的字符串**
+
+**数组常用方法之 indexOf**
+
+- `indexOf` 用来找到数组中某一项的索引
+
+- 语法： `indexOf(你要找的数组中的项)`
+
+  ```javascript
+  var arr = [1, 2, 3, 4, 5]
+  
+  // 使用 indexOf 超找数组中的某一项
+  var index = arr.indexOf(3)
+  
+  console.log(index) // 2
+  ```
+
+  - 我们要找的是数组中值为 3 的那一项
+  - 返回的就是值为 3 的那一项在该数组中的索引
+
+- 如果你要找的内容在数组中没有，那么就会返回 -1
+
+  ```javascript
+  var arr = [1, 2, 3, 4, 5]
+  
+  // 使用 indexOf 超找数组中的某一项
+  var index = arr.indexOf(10)
+  
+  console.log(index) // -1
+  ```
+
+  - 你要找的值在数组中不存在，那么就会返回 -1
+
+
+
+**数组常用方法之 forEach**
+
+- 和 `for` 循环一个作用，就是用来遍历数组的，不能进行操作
+
+- 语法：`arr.forEach(function (item, index, arr) {})`
+
+  ```javascript
+  var arr = [1, 2, 3]
+  
+  // 使用 forEach 遍历数组
+  arr.forEach(function (item, index, arr) {
+    // item 就是数组中的每一项
+    // index 就是数组的索引
+    // arr 就是原始数组
+    console.log('数组的第 ' + index + ' 项的值是 ' + item + '，原始数组是', arr)
+  })
+  ```
+
+  - `forEach()` 的时候传递的那个函数，会根据数组的长度执行
+  - 数组的长度是多少，这个函数就会执行多少回
+
+
+
+**数组常用方法之 map** 
+
+- 和 `forEach` 类似，只不过可以对数组中的每一项进行操作，返回一个新的数组
+
+  ```javascript
+  var arr = [1, 2, 3]
+  
+  // 使用 map 遍历数组
+  var newArr = arr.map(function (item, index, arr) {
+    // item 就是数组中的每一项
+    // index 就是数组的索引
+    // arr 就是原始数组
+    return item + 10
+  })
+  
+  console.log(newArr) // [11, 12, 13]
+  ```
+
+
+
+**数组常用方法之 filter**
+
+- 和 `map` 的使用方式类似，按照我们的条件来筛选数组
+
+- 把原始数组中满足条件的筛选出来，组成一个新的数组返回
+
+  ```javascript
+  var arr = [1, 2, 3]
+  
+  // 使用 filter 过滤数组
+  var newArr = arr.filter(function (item, index, arr) {
+    // item 就是数组中的每一项
+    // index 就是数组的索引
+    // arr 就是原始数组
+    return item > 1
+  })
+  
+  console.log(newArr) // [2, 3]
+  ```
+
+  - 我们设置的条件就是 `> 1`
+  - 返回的新数组就会是原始数组中所有 `> 1` 的项
+
+**数组常用方法之`find()`**：返回数组中第一个满足提供的测试函数的元素的值。如果没有找到符合条件的元素，则返回 `undefined`。该方法不会修改原数组。
+
+```
+const arr = [1, 2, 3, 4, 5];
+const result = arr.find(element => element > 3);
+console.log(result); // 输出: 4
+```
+
+**数组常用方法之`findIndex()`**：返回数组中第一个满足提供的测试函数的元素的索引。如果没有找到符合条件的元素，则返回 `-1`。该方法不会修改原数组。
+
+```
+const arr = [1, 2, 3, 4, 5];
+const index = arr.findIndex(element => element > 3);
+console.log(index); // 输出: 3
+```
+
+**数组常用方法之`indexOf()**`**：返回数组中指定元素的第一个索引位置。如果元素不存在，则返回 `-1`。该方法不会修改原数组。
+
+```
+const arr = [1, 2, 3, 4, 5];
+const index = arr.indexOf(3);
+console.log(index); // 输出: 2
+```
+
+**数组常用方法之`includes()`**：判断数组中是否包含指定的元素，返回布尔值 `true` 或 `false`。该方法不会修改原数组。
+
+```
+const arr = [1, 2, 3, 4, 5];
+const contains = arr.includes(3);
+console.log(contains); // 输出: true
+```
+
+**数组常用方法之`some()`**：检查数组中是否至少有一个元素满足提供的测试函数，返回布尔值 `true` 或 `false`。该方法不会修改原数组。
+
+```
+const arr = [1, 2, 3, 4, 5];
+const hasEven = arr.some(element => element % 2 === 0);
+console.log(hasEven); // 输出: true
+```
+
+**数组常用方法之`every()`**：检查数组中的所有元素是否都满足提供的测试函数，返回布尔值 `true` 或 `false`。该方法不会修改原数组。
+
+```
+const arr = [1, 2, 3, 4, 5];
+const allPositive = arr.every(element => element > 0);
+console.log(allPositive); // 输出: true
+```
+
+**`reduce()` 方法**
+
+`reduce()` 方法对数组中的每个元素执行一个提供的函数，并将其结果汇总为单个值。
+
+**语法：**
+
+```
+array.reduce(callback(accumulator, currentValue, currentIndex, array), initialValue)
+```
+
+- **`callback`**：用于处理数组每个元素的函数，接收四个参数：
+  - **`accumulator`**：累加器，保存上一次调用 `callback` 的返回值，或者是 `initialValue`（如果提供了）。
+  - **`currentValue`**：当前处理的元素。
+  - **`currentIndex`**（可选）：当前元素的索引。
+  - **`array`**（可选）：调用 `reduce()` 的数组本身。
+- **`initialValue`**（可选）：作为第一次调用 `callback` 时的 `accumulator` 的值。如果未提供，`accumulator` 将是数组的第一个元素，`currentValue` 从第二个元素开始。
+
+**示例：**
+
+1. **计算数组元素的总和：**
+
+   ```
+   const numbers = [1, 2, 3, 4, 5];
+   const sum = numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+   console.log(sum); // 输出: 15
+   ```
+
+**`Array.from()` 方法**
+
+`Array.from()` 方法用于从类数组对象或可迭代对象创建一个新的数组实例。
+
+**语法：**
+
+```
+Array.from(arrayLike[, mapFn[, thisArg]])
+```
+
+- **`arrayLike`**：想要转换成数组的类数组对象或可迭代对象。
+- **`mapFn`**（可选）：对数组的每个元素调用的映射函数。
+- **`thisArg`**（可选）：执行 `mapFn` 时用作 `this` 的值。
+
+**示例：**
+
+1. **从字符串创建数组：**
+
+   ```
+   const str = 'Hello';
+   const arr = Array.from(str);
+   console.log(arr); // 输出: ['H', 'e', 'l', 'l', 'o']
+   ```
+
+   **从 Set 创建数组：**
+
+   ```
+   const set = new Set([1, 2, 3, 4, 5]);
+   const arr = Array.from(set);
+   console.log(arr); // 输出: [1, 2, 3, 4, 5]
+   ```
+
+   **从类数组对象（如 `arguments`）创建数组：**
+
+   ```
+   javascript复制编辑function example() {
+     const args = Array.from(arguments);
+     console.log(args); // 输出: [1, 2, 3]
+   }
+   example(1, 2, 3);
+   ```
+
+   **使用映射函数转换数组元素：**
+
+   ```
+   javascript复制编辑const numbers = [1, 2, 3];
+   const doubled = Array.from(numbers, x => x * 2);
+   console.log(doubled); // 输出: [2, 4, 6]
+   ```
+
+**`split()` 方法**用于将字符串拆分为子字符串数组。该方法接受两个参数：分隔符和分割次数。
+
+**语法：**
+
+```
+str.split([separator[, limit]])
+```
+
+**参数：**
+
+- `separator`（可选）：指定用于分割字符串的分隔符。可以是字符串或正则表达式。
+- `limit`（可选）：指定返回的子字符串数组的最大长度。
+
+**示例：**
+
+1. **使用分隔符分割字符串：**
+
+   ```
+   const str = 'apple,banana,cherry';
+   const fruits = str.split(',');
+   console.log(fruits); // 输出：['apple', 'banana', 'cherry']
+   ```
+
+   在上述示例中，字符串 `str` 被逗号 `,` 分割成了一个包含三个元素的数组。
 
 ## 8、 常见的位运算符有哪些？其计算规则是什么？
 
@@ -1867,3 +2324,164 @@ console.log(gen.next()); // { value: undefined, done: true }
   // 移除按钮后，GC 会自动清理 domData 中的关联数据
   button.remove();
   ```
+
+## 21、Intersection Observer API
+
+**Intersection Observer API**（交叉观察器），它是现代浏览器提供的一种高效监测元素与视口（viewport）交叉状态的机制，常用于实现滚动加载、图片懒加载、广告曝光统计等功能。
+
+---
+
+### **一、核心概念**
+
+- **作用**：监听目标元素与父容器（或视口）的**交叉状态变化**（如元素进入/离开视口）。
+- **优势**：
+  - **高性能**：异步回调，避免频繁触发 `scroll` 事件。
+  - **灵活**：可配置触发交叉的阈值（threshold）和监听的根容器。
+  - **自动管理**：无需手动计算元素位置。
+
+---
+
+### **二、基本用法**
+
+#### **1. 创建观察器**
+
+通过 `new IntersectionObserver(callback, options)` 创建实例：
+
+```javascript
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // 元素进入视口时触发
+      console.log('元素可见:', entry.target);
+    }
+  });
+}, {
+  root: null,      // 默认以视口为根容器
+  rootMargin: '0px', // 扩展根容器的边界
+  threshold: 0.5    // 交叉比例阈值（0~1）
+});
+```
+
+#### **2. 观察目标元素**
+
+```javascript
+const target = document.querySelector('.lazy-image');
+observer.observe(target); // 开始观察
+```
+
+#### **3. 停止观察**
+
+```javascript
+observer.unobserve(target); // 停止观察单个元素
+observer.disconnect();      // 停止所有观察
+```
+
+---
+
+### **三、核心参数解释**
+
+#### **1. `callback` 回调函数**
+
+- 参数 `entries`：一个数组，包含所有被观察元素的交叉状态信息。
+- 每个 `entry` 对象包含：
+  - `target`：被观察的 DOM 元素。
+  - `isIntersecting`：是否与根容器交叉。
+  - `intersectionRatio`：交叉比例（0~1）。
+  - `boundingClientRect`：目标元素的边界矩形。
+
+#### **2. `options` 配置项**
+
+| 属性         | 说明                                                         |
+| ------------ | ------------------------------------------------------------ |
+| `root`       | 根容器（默认为视口），必须是目标元素的祖先元素               |
+| `rootMargin` | 扩展根容器的边界（类似 CSS margin），例如 `"10px 20px 30px 40px"` |
+| `threshold`  | 触发回调的交叉比例阈值，从0到1。当元素在视口内的面积占自身多少时触发观察 |
+
+---
+
+### **四、实际应用场景**
+
+#### **1. 图片懒加载**
+
+```html
+< img data-src="image.jpg" class="lazy-image">
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src; // 替换为真实 URL
+        observer.unobserve(img);   // 加载后停止观察
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.lazy-image').forEach(img => {
+    observer.observe(img);
+  });
+</script>
+```
+
+#### **2. 无限滚动加载更多**
+
+```javascript
+// 观察页面底部的“加载提示元素”
+const loadMoreTrigger = document.querySelector('#load-more-trigger');
+const observer = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) {
+    loadMoreData(); // 触发加载更多数据
+  }
+}, { threshold: 1 });
+
+observer.observe(loadMoreTrigger);
+```
+
+#### **3. 广告曝光统计**
+
+```javascript
+// 当广告元素 50% 进入视口时，发送曝光事件
+const adElement = document.querySelector('.ad-banner');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.intersectionRatio >= 0.5) {
+      sendImpressionLog(); // 发送统计请求
+      observer.unobserve(adElement);
+    }
+  });
+}, { threshold: 0.5 });
+
+observer.observe(adElement);
+```
+
+---
+
+### **五、注意事项**
+
+1. **性能优化**：
+   - 避免观察过多元素（可分批观察或动态管理）。
+   - 使用 `unobserve` 及时释放不再需要观察的元素。
+2. **兼容性**：
+   - 支持所有现代浏览器（IE 需 Polyfill，如 `intersection-observer`）。
+   - 通过 `if ('IntersectionObserver' in window)` 检测兼容性。
+3. **阈值配置**：
+   - `threshold: [0, 0.25, 0.5, 0.75, 1]` 可以监听多个交叉比例阶段。
+
+---
+
+### **六、与传统 scroll 事件对比**
+
+| **特性**       | Intersection Observer      | scroll 事件 + 手动计算 |
+| -------------- | -------------------------- | ---------------------- |
+| **性能**       | 高（浏览器优化）           | 低（频繁触发回调）     |
+| **代码复杂度** | 简单                       | 复杂（需计算元素位置） |
+| **精确度**     | 高                         | 依赖计算逻辑准确性     |
+| **适用场景**   | 懒加载、曝光统计、无限滚动 | 简单滚动监听           |
+
+---
+
+### **七、总结**
+
+- **Intersection Observer** 是监测元素可见性的现代解决方案，替代传统的滚动计算逻辑。
+- 通过配置阈值和根容器，可灵活适配多种业务场景。
+- 核心优势是高性能和易维护性，适合需要精细化控制交叉状态的场景。

@@ -588,9 +588,86 @@ console.log(safeUndefined === undefined); // true（即使全局 undefined 被�
 - Symbol 类型的值不能转换为数字，会报错。
 - 对象（包括数组）会首先被转换为相应的基本类型值，如果返回的是非数字的基本类型值，则再遵循以上规则将其强制转换为数字。
 
-为了将值转换为相应的基本类型值，抽象操作 ToPrimitive 会首先（通过内部操作 DefaultValue）检查该值是否有valueOf()方法。如果有并且返回基本类型值，就使用该值进行强制类型转换。如果没有就使用 toString() 的返回值（如果存在）来进行强制类型转换。
+在JavaScript中，引用数据类型（如对象、数组、函数等）转换为`Number`类型的过程遵循以下规则：
 
-如果 valueOf() 和 toString() 均不返回基本类型值，会产生 TypeError 错误。
+### 转换规则
+
+1. **调用`valueOf()`方法**
+   首先尝试调用对象的`valueOf()`方法。如果该方法返回一个**原始值**（`number`、`string`、`boolean`、`null`、`undefined`、`Symbol`），则将此原始值转换为数字。
+2. **调用`toString()`方法**
+   如果`valueOf()`未返回原始值（或返回对象本身），则调用`toString()`方法。将返回的字符串转换为数字。
+3. **错误处理**
+   如果`toString()`也返回非原始值，则会抛出`TypeError`（但这种情况极少见）。
+
+------
+
+### 常见引用类型的转换示例
+
+#### 1. **数组 `Array`**
+
+- **空数组 `[]`**
+  `valueOf()`返回数组本身（非原始值） → 调用`toString()`返回空字符串`""` → `Number("")` → **0**。
+- **单元素数组 `[5]`**
+  `toString()`返回`"5"` → `Number("5")` → **5**。
+- **多元素数组 `[1, 2]`**
+  `toString()`返回`"1,2"` → `Number("1,2")` → **NaN**（无法解析为数字）。
+
+#### 2. **普通对象 `{}`**
+
+- **空对象 `{}`**
+  `valueOf()`返回对象本身 → 调用`toString()`返回`"[object Object]"` → `Number("[object Object]")` → **NaN**。
+
+#### 3. **日期对象 `Date`**
+
+- **`new Date()`**
+  `valueOf()`返回时间戳（数字） → 直接转换为对应数字（如`1633034623456`）。
+
+#### 4. **函数 `function(){}`**
+
+- **普通函数**
+  `toString()`返回函数源码字符串（如`"function(){}"`） → `Number("function(){}")` → **NaN**。
+
+#### 5. **包装对象（如`new Boolean(false)`）**
+
+- **`new Boolean(false)`**
+  `valueOf()`返回`false` → `Number(false)` → **0**。
+- **`new Number(123)`**
+  `valueOf()`返回`123` → 直接转换为**123**。
+
+------
+
+### 自定义转换行为
+
+可以通过覆盖`valueOf()`或`toString()`方法，控制对象的转换结果：
+
+javascript
+
+复制
+
+```
+const obj = {
+  valueOf() { return 42; }
+};
+console.log(Number(obj)); // 42
+
+const obj2 = {
+  toString() { return "100"; }
+};
+console.log(Number(obj2)); // 100
+```
+
+------
+
+### 总结表
+
+| 引用类型       | `valueOf()`返回值 | `toString()`返回值  | 最终转换为`Number`的结果 |
+| :------------- | :---------------- | :------------------ | :----------------------- |
+| `[]`           | `[]`（对象）      | `""`                | 0                        |
+| `[5]`          | `[5]`（对象）     | `"5"`               | 5                        |
+| `[1, 2]`       | `[1, 2]`（对象）  | `"1,2"`             | NaN                      |
+| `{}`           | `{}`（对象）      | `"[object Object]"` | NaN                      |
+| `new Date()`   | 时间戳（数字）    | 日期字符串          | 时间戳数字               |
+| `function(){}` | 函数（对象）      | 函数源码字符串      | NaN                      |
 
 ## 11、 其他值到布尔类型的值的转换规则？
 

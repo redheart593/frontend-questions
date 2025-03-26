@@ -310,6 +310,127 @@ React Portal 是 React 提供的一种特殊功能，允许将子组件**渲染�
 
 ------
 
+## 12、浅拷贝与深拷贝，浅比较与深比较
+
+**浅拷贝（Shallow Copy）**
+
+- **定义**：仅复制对象的顶层属性。如果属性是引用类型（如对象、数组），则复制的是引用地址，而非实际数据。
+- **特点**：新旧对象共享嵌套的引用类型数据，修改其中一个会影响另一个。
+- 使用：
+
+```js
+// 1. 对象展开运算符（...）
+const shallowCopy1 = { ...originalObject };
+
+// 2. Object.assign()
+const shallowCopy2 = Object.assign({}, originalObject);
+
+// 3. 数组的浅拷贝（slice/concat）
+const shallowArray = originalArray.slice();
+```
+
+**深拷贝（Deep Copy）**
+
+- **定义**：递归复制对象的所有层级，新旧对象完全独立，不共享任何引用。
+
+- **特点**：完全独立的数据，修改不影响原对象。
+
+  ```js
+  // 1. JSON方法（有局限性：无法处理函数、循环引用等）
+  const deepCopy1 = JSON.parse(JSON.stringify(originalObject));
+  
+  // 2. 递归实现
+  function deepClone(obj) {
+    if (typeof obj !== 'object' || obj === null) return obj;
+    const result = Array.isArray(obj) ? [] : {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        result[key] = deepClone(obj[key]);
+      }
+    }
+    return result;
+  }
+  
+  // 3. 使用第三方库（如 Lodash 的 _.cloneDeep）
+  const deepCopy2 = _.cloneDeep(originalObject);
+  ```
+
+| 浅拷贝   | 深拷贝                     |                                  |
+| :------- | :------------------------- | -------------------------------- |
+| 嵌套对象 | 共享引用（修改会互相影响） | 完全独立（互不影响）             |
+| 性能     | 快（仅复制顶层）           | 慢（递归所有层级）               |
+| 实现难度 | 简单                       | 复杂（需处理循环引用等边界情况） |
+
+**浅比较（Shallow Compare）**
+
+- **定义**：仅比较对象的**第一层属性**是否相等。
+  - 对基本类型（如 `number`, `string`, `boolean`）直接比较值是否相等。
+  - 对引用类型（如 `object`, `array`）比较其**引用地址**是否相同（即是否指向同一内存地址）。
+- **特点**：
+  - 速度快，但无法检测嵌套对象的内容变化。
+  - 适用于性能敏感场景（如 React 组件的 `props` 和 `state` 比较）。
+
+```
+function shallowCompare(obj1, obj2) {
+  if (obj1 === obj2) return true;
+  if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
+    return false;
+  }
+
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+  if (keys1.length !== keys2.length) return false;
+
+  for (const key of keys1) {
+    if (!obj2.hasOwnProperty(key) || obj1[key] !== obj2[key]) {
+      return false;
+    }
+  }
+  return true;
+}
+```
+
+**深比较（Deep Compare）**
+
+- **定义**：递归比较对象的**所有层级**，确保所有嵌套属性值完全相等。
+
+  - 对引用类型会深入比较其内容，而非仅比较引用地址。
+
+- **特点**：
+
+  - 完全精确，但性能开销较大。
+  - 适用于需要严格判断对象内容是否一致的场景（如状态管理、数据快照）。
+
+- **实现方式**：
+
+  ```
+  function deepCompare(obj1, obj2) {
+    if (obj1 === obj2) return true;
+    if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
+      return false;
+    }
+  
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    if (keys1.length !== keys2.length) return false;
+  
+    for (const key of keys1) {
+      if (!obj2.hasOwnProperty(key)) return false;
+      if (!deepCompare(obj1[key], obj2[key])) return false;
+    }
+    return true;
+  }
+  ```
+
+**关键区别**
+
+|          | 浅比较                             | 深比较                           |
+| :------- | :--------------------------------- | :------------------------------- |
+| 比较层级 | 仅第一层                           | 递归所有层级                     |
+| 引用类型 | 比较引用地址是否相同               | 比较内容是否完全一致             |
+| 性能     | 快                                 | 慢（层级越深，性能越低）         |
+| 使用场景 | 简单对象、性能敏感场景（如 React） | 复杂嵌套对象、严格数据一致性场景 |
+
 ### **二、Portal 的基本用法**
 
 #### **1. 语法**
@@ -2891,7 +3012,7 @@ function UpdateName({}) {
 
 1. 当前的 state。第一次渲染期间，该值为传入的 `initialState` 参数值。在 action 被调用后该值会变为 action 的返回值。
 
-2. 一个新的 fn 函数用于在你的 `form` 组件的 `action` 参数或表单中任意一个 `button` 组件的 `formAction` 参数中传递。这个 fn 也可以手动在 [`startTransition`](https://zh-hans.react.dev/reference/react/startTransition) 中调用。
+2. 一个新的 action 函数用于在你的 `form` 组件的 `action` 参数或表单中任意一个 `button` 组件的 `formAction` 参数中传递。这个 fn 也可以手动在 [`startTransition`](https://zh-hans.react.dev/reference/react/startTransition) 中调用。
 
 3. 一个 `isPending` 标识，用于表明是否有正在 pending 的 Transition。
 
@@ -2899,13 +3020,13 @@ function UpdateName({}) {
 
    ```
    import { useActionState } from 'react';
-   import { action } from './actions.js';
+   import { fn } from './actions.js';
    
    function MyComponent() {
-     const [state, formAction] = useActionState(action, null);
+     const [state, action, isPending] = useActionState(fn, null);
      // ...
      return (
-       <form action={formAction}>
+       <form action={action}>
          {/* ... */}
        </form>
      );

@@ -139,10 +139,6 @@ Person.prototype.constructor  // Person
 - **`instanceof`**：检查对象是否是某个构造函数的实例（基于原型链）。
 - **`Object.prototype.isPrototypeOf()`**：检查一个对象是否在另一个对象的原型链上。
 
-javascript
-
-复制
-
 ```
 console.log(dog instanceof Dog); // true
 console.log(Dog.prototype.isPrototypeOf(dog)); // true
